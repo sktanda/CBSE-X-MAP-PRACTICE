@@ -6,219 +6,143 @@
 <meta name="theme-color" content="#123b6d">
 <title>CBSE X SST India Map Practice 2026–27</title>
 <style>
-:root{--blue:#123b6d;--light:#eef5fb;--green:#147a45;--red:#b42318;--gold:#f5b942}
-*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f5f7fa;color:#182230}
-header{background:linear-gradient(135deg,#123b6d,#1d5d9b);color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:20}
-h1{font-size:20px;margin:0 0 4px} header p{margin:0;font-size:12px;opacity:.9}
-main{max-width:1100px;margin:auto;padding:12px}
-.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px #00000012}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.controls.three{grid-template-columns:1fr 1fr 1fr}
-label{font-size:12px;font-weight:700;color:#52606d}select,button{width:100%;min-height:44px;border-radius:10px;border:1px solid #cbd5e1;font-size:15px;background:#fff;padding:8px}
-button{background:var(--blue);color:#fff;border:0;font-weight:700;cursor:pointer}
-button.secondary{background:#e7eef6;color:#123b6d}button.green{background:var(--green)}
-.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.stat{background:var(--light);padding:7px 10px;border-radius:999px;font-size:12px}
-.question{font-size:18px;font-weight:750;line-height:1.35;margin:4px 0 8px}
-.small{font-size:12px;color:#637083}.status{min-height:28px;margin-top:8px;font-weight:700}
-.correct{color:var(--green)}.wrong{color:var(--red)}
-.mapwrap{position:relative;width:100%;overflow:hidden;border-radius:14px;background:#fff;border:1px solid #d5dde7}
-.mapwrap img{display:block;width:100%;height:auto}
-#overlay{position:absolute;left:0;top:0;width:100%;height:100%;touch-action:none}
-.marker{fill:#d71920;stroke:#fff;stroke-width:3}.target{fill:#f5b942;stroke:#7a4d00;stroke-width:2}
-.mapnote{font-size:11px;color:#667085;margin-top:7px}
-.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.options button{background:#fff;color:#182230;border:1px solid #cbd5e1;text-align:left}
-.options button:active{transform:scale(.99)}.options button.chosen{border-color:#123b6d;background:#eef5fb}
-.footer{font-size:11px;color:#667085;text-align:center;padding:10px}
-@media(max-width:600px){.controls,.controls.three{grid-template-columns:1fr}.options{grid-template-columns:1fr}main{padding:8px}}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#182230;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+header{background:#123b6d;color:white;padding:18px 14px}h1{font-size:20px;margin:0 0 4px}header p{margin:0;font-size:12px}
+main{max-width:1050px;margin:auto;padding:10px}.card{background:#fff;border-radius:14px;padding:13px;margin-bottom:10px;box-shadow:0 2px 9px #0001}
+.controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}label{font-size:12px;font-weight:700;color:#52606d}
+select,button{width:100%;min-height:46px;border-radius:10px;border:1px solid #cbd5e1;padding:8px;font-size:15px;background:#fff}
+button{background:#123b6d;color:#fff;border:0;font-weight:750}button.green{background:#147a45}button.gray{background:#e7eef6;color:#123b6d}
+.question{font-size:18px;font-weight:750;line-height:1.35}.small{font-size:12px;color:#637083;margin-top:5px}
+.status{min-height:27px;margin-top:8px;font-weight:700}.correct{color:#147a45}.wrong{color:#b42318}
+.stats{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.stat{background:#eef5fb;border-radius:999px;padding:6px 9px;font-size:12px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.options button{background:white;color:#182230;border:1px solid #cbd5e1;text-align:left}
+.mapwrap{position:relative;border:1px solid #d5dde7;border-radius:12px;overflow:hidden;background:#fff}
+.mapwrap img{display:block;width:100%;height:auto;min-height:280px;object-fit:contain}
+#overlay{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+#marker{fill:#d71920;stroke:white;stroke-width:3}
+@media(max-width:650px){.controls{grid-template-columns:1fr}.options{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header>
-<h1>CBSE Class X SST — India Map Practice</h1>
-<p>2026–27 • Locate • Identify • Learn • Exam Practice</p>
-</header>
+<header><h1>CBSE Class X SST — India Map Practice</h1><p>2026–27 • Locate • Identify • CBSE Practice</p></header>
 <main>
 <section class="card">
 <div class="controls">
 <div><label>Mode</label><select id="mode">
-<option value="locate">Locate on Map</option>
-<option value="identify">Identify the Marked Place</option>
-<option value="mcq">CBSE Identify (MCQ)</option>
-<option value="learn">Learn / Revision</option>
+<option value="locate">Locate on Map</option><option value="identify">Identify Marked Place</option>
+<option value="mcq">CBSE Identify (MCQ)</option><option value="learn">Learn / Revision</option>
 </select></div>
 <div><label>Topic</label><select id="topic"><option value="all">All CBSE map topics</option></select></div>
+<div><label>Actions</label><button type="button" id="resetBtn" class="gray">Reset Score</button></div>
 </div>
-<div class="controls three" style="margin-top:8px">
-<button id="newBtn">NEW QUESTION</button>
-<button id="nextBtn" class="green">NEXT QUESTION ▶</button>
-<button id="resetBtn" class="secondary">Reset Score</button>
+<div class="controls" style="margin-top:8px">
+<button type="button" id="newBtn">NEW QUESTION</button>
+<button type="button" id="nextBtn" class="green">NEXT QUESTION ▶</button>
+<div></div>
 </div>
-<div class="stats">
-<span class="stat">Questions: <b id="qcount">0</b></span>
-<span class="stat">Correct: <b id="correct">0</b></span>
-<span class="stat">Accuracy: <b id="accuracy">0%</b></span>
-</div>
+<div class="stats"><span class="stat">Questions: <b id="qcount">0</b></span><span class="stat">Correct: <b id="correct">0</b></span><span class="stat">Accuracy: <b id="accuracy">0%</b></span></div>
 </section>
 
 <section class="card">
 <div class="question" id="question">Press <b>NEW QUESTION</b> to begin.</div>
-<div class="small" id="hint">For Locate mode, tap where you think the place is on the map.</div>
+<div class="small" id="hint">Choose a mode, then start.</div>
 <div id="options" class="options"></div>
 <div id="status" class="status"></div>
 </section>
 
 <section class="card">
-<div class="mapwrap" id="mapwrap">
-<img id="map" alt="Survey of India official 1:16M outline map with state boundaries"
-src="https://hcidhaka.gov.in/images/map4_05032024_dhaka.jpg"
-onerror="document.getElementById('mapStatus').textContent='Map image could not be loaded. The quiz controls still work; open the official map from the link below.'">
-<svg id="overlay" viewBox="0 0 512 512" preserveAspectRatio="none" aria-label="Interactive map layer">
-<circle id="marker" class="marker" cx="-20" cy="-20" r="7" style="display:none"></circle>
+<div class="mapwrap">
+<img id="map" alt="Survey of India 1:16M outline map with state boundaries"
+src="https://hcidhaka.gov.in/images/map4_05032024_dhaka.jpg">
+<svg id="overlay" viewBox="0 0 512 512" preserveAspectRatio="none">
+<circle id="marker" cx="-20" cy="-20" r="7" style="display:none"></circle>
 </svg>
 </div>
-<div id="mapStatus" class="mapnote">Survey of India 1:16M outline map with state boundaries.</div>
-<div class="mapnote"><a href="https://surveyofindia.gov.in/pages/outline-maps-of-india" target="_blank" rel="noopener">Open Survey of India outline maps</a></div>
+<div class="small">Survey of India 1:16M outline map with state boundaries.</div>
+<div class="small" id="mapStatus"></div>
 </section>
-
-<section class="card" id="learnCard" style="display:none">
-<strong>Revision card</strong>
-<div id="learnText" class="small" style="margin-top:7px"></div>
-</section>
-
-<div class="footer">For educational practice. Verify the latest CBSE syllabus and prescribed map before the board examination.</div>
 </main>
 
 <script>
-const DB = {"points":[{"subject":"History","topic":"Congress Sessions","name":"1920 Calcutta","label":"Calcutta / Kolkata (1920 Congress Session)","lat":22.5726,"lon":88.3639},{"subject":"History","topic":"Congress Sessions","name":"1920 Nagpur","label":"Nagpur (1920 Congress Session)","lat":21.1458,"lon":79.0882},{"subject":"History","topic":"Congress Sessions","name":"1927 Madras","label":"Madras / Chennai (1927 Congress Session)","lat":13.0827,"lon":80.2707},{"subject":"History","topic":"Satyagraha","name":"Kheda","label":"Kheda Satyagraha","lat":22.75,"lon":72.68},{"subject":"History","topic":"Satyagraha","name":"Champaran","label":"Champaran Satyagraha","lat":26.65,"lon":84.9},{"subject":"History","topic":"Satyagraha","name":"Ahmedabad","label":"Ahmedabad Mill Workers' Satyagraha","lat":23.0225,"lon":72.5714},{"subject":"History","topic":"National Movement","name":"Jallianwala Bagh","label":"Jallianwala Bagh, Amritsar","lat":31.62,"lon":74.8765},{"subject":"History","topic":"National Movement","name":"Dandi","label":"Dandi March","lat":20.9467,"lon":72.951},{"subject":"Water Resources","topic":"Dams","name":"Salal","label":"Salal Dam","lat":33.14,"lon":75.23},{"subject":"Water Resources","topic":"Dams","name":"Bhakra Nangal","label":"Bhakra Nangal","lat":31.41,"lon":76.44},{"subject":"Water Resources","topic":"Dams","name":"Tehri","label":"Tehri","lat":30.38,"lon":78.48},{"subject":"Water Resources","topic":"Dams","name":"Rana Pratap Sagar","label":"Rana Pratap Sagar","lat":24.02,"lon":73.83},{"subject":"Water Resources","topic":"Dams","name":"Sardar Sarovar","label":"Sardar Sarovar","lat":21.83,"lon":73.75},{"subject":"Water Resources","topic":"Dams","name":"Hirakund","label":"Hirakund","lat":21.53,"lon":83.87},{"subject":"Water Resources","topic":"Dams","name":"Nagarjun Sagar","label":"Nagarjun Sagar","lat":16.57,"lon":79.31},{"subject":"Water Resources","topic":"Dams","name":"Tungabhadra","label":"Tungabhadra","lat":15.27,"lon":76.34},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Mayurbhanj","label":"Mayurbhanj iron-ore mines","lat":21.93,"lon":86.72},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Durg","label":"Durg iron-ore mines","lat":21.19,"lon":81.28},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Bailadila","label":"Bailadila iron-ore mines","lat":18.68,"lon":81.24},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Bellary","label":"Bellary iron-ore mines","lat":15.14,"lon":76.92},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Kudremukh","label":"Kudremukh iron-ore mines","lat":13.25,"lon":75.25},{"subject":"Minerals & Energy","topic":"Coal","name":"Raniganj","label":"Raniganj coal mines","lat":23.62,"lon":87.13},{"subject":"Minerals & Energy","topic":"Coal","name":"Bokaro","label":"Bokaro coal mines","lat":23.67,"lon":86.15},{"subject":"Minerals & Energy","topic":"Coal","name":"Talcher","label":"Talcher coal mines","lat":20.95,"lon":85.23},{"subject":"Minerals & Energy","topic":"Coal","name":"Neyveli","label":"Neyveli coal mines","lat":11.54,"lon":79.47},{"subject":"Minerals & Energy","topic":"Oil","name":"Digboi","label":"Digboi oil field","lat":27.39,"lon":95.62},{"subject":"Minerals & Energy","topic":"Oil","name":"Naharkatia","label":"Naharkatia oil field","lat":27.29,"lon":95.34},{"subject":"Minerals & Energy","topic":"Oil","name":"Mumbai High","label":"Mumbai High oil field","lat":19.5,"lon":71.0},{"subject":"Minerals & Energy","topic":"Oil","name":"Bassien","label":"Bassien oil field","lat":19.5,"lon":72.7},{"subject":"Minerals & Energy","topic":"Oil","name":"Kalol","label":"Kalol oil field","lat":23.25,"lon":72.5},{"subject":"Minerals & Energy","topic":"Oil","name":"Ankaleshwar","label":"Ankaleshwar oil field","lat":21.63,"lon":73.0},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Namrup","label":"Namrup thermal power plant","lat":27.18,"lon":95.32},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Singrauli","label":"Singrauli thermal power plant","lat":24.12,"lon":82.67},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Ramagundam","label":"Ramagundam thermal power plant","lat":18.76,"lon":79.47},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Narora","label":"Narora nuclear power plant","lat":28.2,"lon":78.38},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Kakrapara","label":"Kakrapara nuclear power plant","lat":21.24,"lon":73.35},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Tarapur","label":"Tarapur nuclear power plant","lat":19.86,"lon":72.68},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Kalpakkam","label":"Kalpakkam nuclear power plant","lat":12.56,"lon":80.19},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Mumbai","label":"Mumbai cotton textile industry","lat":19.076,"lon":72.878},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Indore","label":"Indore cotton textile industry","lat":22.72,"lon":75.858},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Surat","label":"Surat cotton textile industry","lat":21.17,"lon":72.83},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Kanpur","label":"Kanpur cotton textile industry","lat":26.45,"lon":80.35},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Coimbatore","label":"Coimbatore cotton textile industry","lat":11.02,"lon":76.96},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Durgapur","label":"Durgapur steel plant","lat":23.52,"lon":87.31},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Bokaro","label":"Bokaro steel plant","lat":23.67,"lon":86.15},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Jamshedpur","label":"Jamshedpur steel plant","lat":22.8,"lon":86.2},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Bhilai","label":"Bhilai steel plant","lat":21.21,"lon":81.38},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Vijayanagar","label":"Vijayanagar steel plant","lat":15.15,"lon":76.63},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Salem","label":"Salem steel plant","lat":11.66,"lon":78.16},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Noida","label":"Noida Software Technology Park","lat":28.54,"lon":77.39},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Gandhinagar","label":"Gandhinagar Software Technology Park","lat":23.22,"lon":72.64},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Mumbai","label":"Mumbai Software Technology Park","lat":19.076,"lon":72.878},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Pune","label":"Pune Software Technology Park","lat":18.52,"lon":73.86},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Hyderabad","label":"Hyderabad Software Technology Park","lat":17.39,"lon":78.49},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Bengaluru","label":"Bengaluru Software Technology Park","lat":12.97,"lon":77.59},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Chennai","label":"Chennai Software Technology Park","lat":13.083,"lon":80.271},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Thiruvananthapuram","label":"Thiruvananthapuram Software Technology Park","lat":8.52,"lon":76.94},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Kandla","label":"Kandla / Deendayal Port","lat":23.03,"lon":70.22},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Tuticorin","label":"Tuticorin / V.O. Chidambaranar Port","lat":8.8,"lon":78.13},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Mumbai","label":"Mumbai Port","lat":19.076,"lon":72.878},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Chennai","label":"Chennai Port","lat":13.083,"lon":80.271},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Marmagao","label":"Marmagao Port","lat":15.42,"lon":73.8},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Visakhapatnam","label":"Visakhapatnam Port","lat":17.69,"lon":83.22},{"subject":"Lifelines","topic":"Major Sea Ports","name":"New Mangalore","label":"New Mangalore Port","lat":12.91,"lon":74.86},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Paradip","label":"Paradip Port","lat":20.27,"lon":86.67},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Kochi","label":"Kochi Port","lat":9.97,"lon":76.28},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Haldia","label":"Haldia Port","lat":22.03,"lon":88.06},{"subject":"Lifelines","topic":"International Airports","name":"Amritsar","label":"Amritsar International Airport","lat":31.63,"lon":74.87},{"subject":"Lifelines","topic":"International Airports","name":"Delhi","label":"Delhi International Airport","lat":28.61,"lon":77.21},{"subject":"Lifelines","topic":"International Airports","name":"Mumbai","label":"Mumbai International Airport","lat":19.08,"lon":72.88},{"subject":"Lifelines","topic":"International Airports","name":"Chennai","label":"Chennai International Airport","lat":13.08,"lon":80.27},{"subject":"Lifelines","topic":"International Airports","name":"Kolkata","label":"Kolkata International Airport","lat":22.65,"lon":88.45},{"subject":"Lifelines","topic":"International Airports","name":"Hyderabad","label":"Hyderabad International Airport","lat":17.24,"lon":78.43}],"mcq":[{"subject":"Resources & Development","topic":"Major Soil Types","q":"Which soil is strongly associated with the Deccan Trap region?","answer":"Black soil","options":["Black soil","Alluvial soil","Laterite soil","Arid soil"]},{"subject":"Agriculture","topic":"Rice","q":"Which is a major rice-producing state?","answer":"West Bengal","options":["West Bengal","Rajasthan","Punjab","Gujarat"]},{"subject":"Agriculture","topic":"Wheat","q":"Which is a major wheat-producing state?","answer":"Uttar Pradesh","options":["Uttar Pradesh","Kerala","Assam","Tamil Nadu"]},{"subject":"Agriculture","topic":"Sugarcane","q":"Which is a major sugarcane-producing state?","answer":"Uttar Pradesh","options":["Uttar Pradesh","Odisha","Kerala","Himachal Pradesh"]},{"subject":"Agriculture","topic":"Tea","q":"Which is a major tea-producing state?","answer":"Assam","options":["Assam","Punjab","Gujarat","Rajasthan"]},{"subject":"Agriculture","topic":"Coffee","q":"Which is a major coffee-producing state?","answer":"Karnataka","options":["Karnataka","Bihar","Punjab","Haryana"]},{"subject":"Agriculture","topic":"Rubber","q":"Which is a major rubber-producing state?","answer":"Kerala","options":["Kerala","Rajasthan","Haryana","Gujarat"]},{"subject":"Agriculture","topic":"Cotton","q":"Which is a major cotton-producing state?","answer":"Gujarat","options":["Gujarat","West Bengal","Kerala","Bihar"]},{"subject":"Agriculture","topic":"Jute","q":"Which is a major jute-producing state?","answer":"West Bengal","options":["West Bengal","Maharashtra","Punjab","Tamil Nadu"]}]};
-const MAP = {left:30, right:484, top:30, bottom:484, lon0:68, lon1:98, lat0:7, lat1:37};
+/* DATA */
+const DB={"points":[{"subject":"History","topic":"Congress Sessions","name":"1920 Calcutta","label":"Calcutta / Kolkata (1920 Congress Session)","lat":22.5726,"lon":88.3639},{"subject":"History","topic":"Congress Sessions","name":"1920 Nagpur","label":"Nagpur (1920 Congress Session)","lat":21.1458,"lon":79.0882},{"subject":"History","topic":"Congress Sessions","name":"1927 Madras","label":"Madras / Chennai (1927 Congress Session)","lat":13.0827,"lon":80.2707},{"subject":"History","topic":"Satyagraha","name":"Kheda","label":"Kheda Satyagraha","lat":22.75,"lon":72.68},{"subject":"History","topic":"Satyagraha","name":"Champaran","label":"Champaran Satyagraha","lat":26.65,"lon":84.9},{"subject":"History","topic":"Satyagraha","name":"Ahmedabad","label":"Ahmedabad Mill Workers' Satyagraha","lat":23.0225,"lon":72.5714},{"subject":"History","topic":"National Movement","name":"Jallianwala Bagh","label":"Jallianwala Bagh, Amritsar","lat":31.62,"lon":74.8765},{"subject":"History","topic":"National Movement","name":"Dandi","label":"Dandi March","lat":20.9467,"lon":72.951},{"subject":"Water Resources","topic":"Dams","name":"Salal","label":"Salal Dam","lat":33.14,"lon":75.23},{"subject":"Water Resources","topic":"Dams","name":"Bhakra Nangal","label":"Bhakra Nangal","lat":31.41,"lon":76.44},{"subject":"Water Resources","topic":"Dams","name":"Tehri","label":"Tehri","lat":30.38,"lon":78.48},{"subject":"Water Resources","topic":"Dams","name":"Rana Pratap Sagar","label":"Rana Pratap Sagar","lat":24.02,"lon":73.83},{"subject":"Water Resources","topic":"Dams","name":"Sardar Sarovar","label":"Sardar Sarovar","lat":21.83,"lon":73.75},{"subject":"Water Resources","topic":"Dams","name":"Hirakund","label":"Hirakund","lat":21.53,"lon":83.87},{"subject":"Water Resources","topic":"Dams","name":"Nagarjun Sagar","label":"Nagarjun Sagar","lat":16.57,"lon":79.31},{"subject":"Water Resources","topic":"Dams","name":"Tungabhadra","label":"Tungabhadra","lat":15.27,"lon":76.34},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Mayurbhanj","label":"Mayurbhanj iron-ore mines","lat":21.93,"lon":86.72},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Durg","label":"Durg iron-ore mines","lat":21.19,"lon":81.28},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Bailadila","label":"Bailadila iron-ore mines","lat":18.68,"lon":81.24},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Bellary","label":"Bellary iron-ore mines","lat":15.14,"lon":76.92},{"subject":"Minerals & Energy","topic":"Iron Ore","name":"Kudremukh","label":"Kudremukh iron-ore mines","lat":13.25,"lon":75.25},{"subject":"Minerals & Energy","topic":"Coal","name":"Raniganj","label":"Raniganj coal mines","lat":23.62,"lon":87.13},{"subject":"Minerals & Energy","topic":"Coal","name":"Bokaro","label":"Bokaro coal mines","lat":23.67,"lon":86.15},{"subject":"Minerals & Energy","topic":"Coal","name":"Talcher","label":"Talcher coal mines","lat":20.95,"lon":85.23},{"subject":"Minerals & Energy","topic":"Coal","name":"Neyveli","label":"Neyveli coal mines","lat":11.54,"lon":79.47},{"subject":"Minerals & Energy","topic":"Oil","name":"Digboi","label":"Digboi oil field","lat":27.39,"lon":95.62},{"subject":"Minerals & Energy","topic":"Oil","name":"Naharkatia","label":"Naharkatia oil field","lat":27.29,"lon":95.34},{"subject":"Minerals & Energy","topic":"Oil","name":"Mumbai High","label":"Mumbai High oil field","lat":19.5,"lon":71.0},{"subject":"Minerals & Energy","topic":"Oil","name":"Bassien","label":"Bassien oil field","lat":19.5,"lon":72.7},{"subject":"Minerals & Energy","topic":"Oil","name":"Kalol","label":"Kalol oil field","lat":23.25,"lon":72.5},{"subject":"Minerals & Energy","topic":"Oil","name":"Ankaleshwar","label":"Ankaleshwar oil field","lat":21.63,"lon":73.0},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Namrup","label":"Namrup thermal power plant","lat":27.18,"lon":95.32},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Singrauli","label":"Singrauli thermal power plant","lat":24.12,"lon":82.67},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Ramagundam","label":"Ramagundam thermal power plant","lat":18.76,"lon":79.47},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Narora","label":"Narora nuclear power plant","lat":28.2,"lon":78.38},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Kakrapara","label":"Kakrapara nuclear power plant","lat":21.24,"lon":73.35},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Tarapur","label":"Tarapur nuclear power plant","lat":19.86,"lon":72.68},{"subject":"Minerals & Energy","topic":"Power Plants","name":"Kalpakkam","label":"Kalpakkam nuclear power plant","lat":12.56,"lon":80.19},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Mumbai","label":"Mumbai cotton textile industry","lat":19.076,"lon":72.878},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Indore","label":"Indore cotton textile industry","lat":22.72,"lon":75.858},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Surat","label":"Surat cotton textile industry","lat":21.17,"lon":72.83},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Kanpur","label":"Kanpur cotton textile industry","lat":26.45,"lon":80.35},{"subject":"Manufacturing","topic":"Cotton Textile","name":"Coimbatore","label":"Coimbatore cotton textile industry","lat":11.02,"lon":76.96},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Durgapur","label":"Durgapur steel plant","lat":23.52,"lon":87.31},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Bokaro","label":"Bokaro steel plant","lat":23.67,"lon":86.15},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Jamshedpur","label":"Jamshedpur steel plant","lat":22.8,"lon":86.2},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Bhilai","label":"Bhilai steel plant","lat":21.21,"lon":81.38},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Vijayanagar","label":"Vijayanagar steel plant","lat":15.15,"lon":76.63},{"subject":"Manufacturing","topic":"Iron & Steel","name":"Salem","label":"Salem steel plant","lat":11.66,"lon":78.16},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Noida","label":"Noida Software Technology Park","lat":28.54,"lon":77.39},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Gandhinagar","label":"Gandhinagar Software Technology Park","lat":23.22,"lon":72.64},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Mumbai","label":"Mumbai Software Technology Park","lat":19.076,"lon":72.878},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Pune","label":"Pune Software Technology Park","lat":18.52,"lon":73.86},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Hyderabad","label":"Hyderabad Software Technology Park","lat":17.39,"lon":78.49},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Bengaluru","label":"Bengaluru Software Technology Park","lat":12.97,"lon":77.59},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Chennai","label":"Chennai Software Technology Park","lat":13.083,"lon":80.271},{"subject":"Manufacturing","topic":"Software Technology Parks","name":"Thiruvananthapuram","label":"Thiruvananthapuram Software Technology Park","lat":8.52,"lon":76.94},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Kandla","label":"Kandla / Deendayal Port","lat":23.03,"lon":70.22},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Tuticorin","label":"Tuticorin / V.O. Chidambaranar Port","lat":8.8,"lon":78.13},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Mumbai","label":"Mumbai Port","lat":19.076,"lon":72.878},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Chennai","label":"Chennai Port","lat":13.083,"lon":80.271},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Marmagao","label":"Marmagao Port","lat":15.42,"lon":73.8},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Visakhapatnam","label":"Visakhapatnam Port","lat":17.69,"lon":83.22},{"subject":"Lifelines","topic":"Major Sea Ports","name":"New Mangalore","label":"New Mangalore Port","lat":12.91,"lon":74.86},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Paradip","label":"Paradip Port","lat":20.27,"lon":86.67},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Kochi","label":"Kochi Port","lat":9.97,"lon":76.28},{"subject":"Lifelines","topic":"Major Sea Ports","name":"Haldia","label":"Haldia Port","lat":22.03,"lon":88.06},{"subject":"Lifelines","topic":"International Airports","name":"Amritsar","label":"Amritsar International Airport","lat":31.63,"lon":74.87},{"subject":"Lifelines","topic":"International Airports","name":"Delhi","label":"Delhi International Airport","lat":28.61,"lon":77.21},{"subject":"Lifelines","topic":"International Airports","name":"Mumbai","label":"Mumbai International Airport","lat":19.08,"lon":72.88},{"subject":"Lifelines","topic":"International Airports","name":"Chennai","label":"Chennai International Airport","lat":13.08,"lon":80.27},{"subject":"Lifelines","topic":"International Airports","name":"Kolkata","label":"Kolkata International Airport","lat":22.65,"lon":88.45},{"subject":"Lifelines","topic":"International Airports","name":"Hyderabad","label":"Hyderabad International Airport","lat":17.24,"lon":78.43}],"mcq":[{"subject":"Resources & Development","topic":"Major Soil Types","q":"Which soil is strongly associated with the Deccan Trap region?","answer":"Black soil","options":["Black soil","Alluvial soil","Laterite soil","Arid soil"]},{"subject":"Agriculture","topic":"Rice","q":"Which is a major rice-producing state?","answer":"West Bengal","options":["West Bengal","Rajasthan","Punjab","Gujarat"]},{"subject":"Agriculture","topic":"Wheat","q":"Which is a major wheat-producing state?","answer":"Uttar Pradesh","options":["Uttar Pradesh","Kerala","Assam","Tamil Nadu"]},{"subject":"Agriculture","topic":"Sugarcane","q":"Which is a major sugarcane-producing state?","answer":"Uttar Pradesh","options":["Uttar Pradesh","Odisha","Kerala","Himachal Pradesh"]},{"subject":"Agriculture","topic":"Tea","q":"Which is a major tea-producing state?","answer":"Assam","options":["Assam","Punjab","Gujarat","Rajasthan"]},{"subject":"Agriculture","topic":"Coffee","q":"Which is a major coffee-producing state?","answer":"Karnataka","options":["Karnataka","Bihar","Punjab","Haryana"]},{"subject":"Agriculture","topic":"Rubber","q":"Which is a major rubber-producing state?","answer":"Kerala","options":["Kerala","Rajasthan","Haryana","Gujarat"]},{"subject":"Agriculture","topic":"Cotton","q":"Which is a major cotton-producing state?","answer":"Gujarat","options":["Gujarat","West Bengal","Kerala","Bihar"]},{"subject":"Agriculture","topic":"Jute","q":"Which is a major jute-producing state?","answer":"West Bengal","options":["West Bengal","Maharashtra","Punjab","Tamil Nadu"]}]};
+/* State */
+var state={mode:"locate",topic:"all",current:null,answered:false,questions:0,correct:0};
+var MAP={left:30,right:484,top:30,bottom:484,lon0:68,lon1:98,lat0:7,lat1:37};
 
-let state={mode:"locate",topic:"all",current:null,answered:false,questions:0,correct:0};
-
-const $=id=>document.getElementById(id);
-const allTopics=[...new Set([...DB.points.map(x=>x.subject),...DB.mcq.map(x=>x.subject)])].sort();
-
-function populateTopics(){
-  const s=$("topic");
-  allTopics.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;s.appendChild(o)});
-}
-function project(lat,lon){
-  const x=MAP.left+(lon-MAP.lon0)/(MAP.lon1-MAP.lon0)*(MAP.right-MAP.left);
-  const y=MAP.top+(MAP.lat1-lat)/(MAP.lat1-MAP.lat0)*(MAP.bottom-MAP.top);
-  return [x,y];
-}
-function visiblePoints(){
-  return DB.points.filter(x=>state.topic==="all"||x.subject===state.topic);
-}
-function visibleMcq(){
-  return DB.mcq.filter(x=>state.topic==="all"||x.subject===state.topic);
-}
+function E(id){return document.getElementById(id)}
+function setStatus(t,c){E("status").textContent=t;E("status").className="status "+(c||"")}
+function updateStats(){E("qcount").textContent=state.questions;E("correct").textContent=state.correct;E("accuracy").textContent=state.questions?Math.round(state.correct/state.questions*100)+"%":"0%"}
+function project(lat,lon){return [MAP.left+(lon-MAP.lon0)/(MAP.lon1-MAP.lon0)*(MAP.right-MAP.left),MAP.top+(MAP.lat1-lat)/(MAP.lat1-MAP.lat0)*(MAP.bottom-MAP.top)]}
 function random(a){return a[Math.floor(Math.random()*a.length)]}
-function clearMap(){
-  $("marker").style.display="none";
+function points(){return DB.points.filter(x=>state.topic==="all"||x.subject===state.topic)}
+function mcqs(){return DB.mcq.filter(x=>state.topic==="all"||x.subject===state.topic)}
+function clearMarker(){E("marker").style.display="none"}
+function showMarker(x){var p=project(x.lat,x.lon),m=E("marker");m.setAttribute("cx",p[0]);m.setAttribute("cy",p[1]);m.style.display="block"}
+
+function answerChoice(choice,btn){
+ if(state.answered)return; state.answered=true; state.questions++;
+ document.querySelectorAll("#options button").forEach(function(b){b.disabled=true});
+ if(choice===state.current.name){state.correct++;setStatus("✓ Correct","correct")}
+ else setStatus("✗ Correct answer: "+state.current.name,"wrong");
+ updateStats();
 }
-function showMarker(item){
-  const [x,y]=project(item.lat,item.lon);
-  const m=$("marker");m.setAttribute("cx",x);m.setAttribute("cy",y);m.style.display="block";
-}
-function updateStats(){
-  $("qcount").textContent=state.questions;
-  $("correct").textContent=state.correct;
-  $("accuracy").textContent=state.questions?Math.round(state.correct/state.questions*100)+"%":"0%";
-}
-function setStatus(text,cls=""){
-  $("status").textContent=text;$("status").className="status "+cls;
+function answerMcq(choice){
+ if(state.answered)return; state.answered=true; state.questions++;
+ document.querySelectorAll("#options button").forEach(function(b){b.disabled=true});
+ if(choice===state.current.answer){state.correct++;setStatus("✓ Correct","correct")}
+ else setStatus("✗ Correct answer: "+state.current.answer,"wrong");
+ updateStats();
 }
 function newQuestion(){
-  state.answered=false; clearMap(); $("options").innerHTML=""; setStatus("");
-  const mode=state.mode;
+ try{
+  state.answered=false;clearMarker();E("options").innerHTML="";setStatus("");
+  var mode=state.mode;
   if(mode==="mcq"){
-    const pool=visibleMcq(); if(!pool.length)return;
-    state.current=random(pool);
-    $("question").textContent=state.current.q;
-    $("hint").textContent="CBSE map-work identification practice.";
-    const choices=[...state.current.options].sort(()=>Math.random()-.5);
-    choices.forEach(c=>{
-      const b=document.createElement("button");
-      b.textContent=c;
-      b.onclick=()=>answerMcq(c,b);
-      $("options").appendChild(b);
+    var q=mcqs(); if(!q.length){setStatus("No MCQ available for this topic.","wrong");return}
+    state.current=random(q);E("question").textContent=state.current.q;E("hint").textContent="Choose the correct answer.";
+    state.current.options.slice().sort(function(){return Math.random()-.5}).forEach(function(c){
+      var b=document.createElement("button");b.type="button";b.textContent=c;b.onclick=function(){answerMcq(c)};E("options").appendChild(b)
     });
   } else if(mode==="identify"){
-    const pool=visiblePoints(); if(!pool.length)return;
-    state.current=random(pool);
-    $("question").textContent="Which location is marked on the map?";
-    $("hint").textContent="Choose the correct CBSE location.";
-    showMarker(state.current);
-    const choices=[state.current.name];
-    const others=pool.filter(x=>x.name!==state.current.name);
-    while(choices.length<4 && others.length) {const x=others.splice(Math.floor(Math.random()*others.length),1)[0]; if(!choices.includes(x.name))choices.push(x.name)}
-    choices.sort(()=>Math.random()-.5);
-    choices.forEach(c=>{const b=document.createElement("button");b.textContent=c;b.onclick=()=>answerChoice(c,b);$("options").appendChild(b)});
-  } else if(mode==="locate"){
-    const pool=visiblePoints(); if(!pool.length)return;
-    state.current=random(pool);
-    $("question").textContent="Locate: "+state.current.name;
-    $("hint").textContent="Tap the place on the map. A reasonable point near the location is accepted.";
+    var p=points(); if(!p.length){setStatus("No locations available for this topic.","wrong");return}
+    state.current=random(p);E("question").textContent="Which location is marked on the map?";E("hint").textContent="Choose the correct CBSE location.";showMarker(state.current);
+    var choices=[state.current.name],o=p.filter(function(x){return x.name!==state.current.name});
+    while(choices.length<4&&o.length){var x=o.splice(Math.floor(Math.random()*o.length),1)[0];if(choices.indexOf(x.name)<0)choices.push(x.name)}
+    choices.sort(function(){return Math.random()-.5}).forEach(function(c){var b=document.createElement("button");b.type="button";b.textContent=c;b.onclick=function(){answerChoice(c,b)};E("options").appendChild(b)});
   } else {
-    const pool=visiblePoints(); if(!pool.length)return;
-    state.current=random(pool);
-    $("question").textContent=state.current.name;
-    $("hint").textContent="Revision: study the location and its CBSE category.";
-    showMarker(state.current);
-    $("learnCard").style.display="block";
-    $("learnText").innerHTML="<b>Chapter/topic:</b> "+state.current.subject+" → "+state.current.topic+
-      "<br><b>Map label:</b> "+state.current.label;
+    var p2=points(); if(!p2.length){setStatus("No locations available for this topic.","wrong");return}
+    state.current=random(p2);E("question").textContent=mode==="learn"?state.current.name:"Locate: "+state.current.name;
+    E("hint").textContent=mode==="learn"?"Revision: "+state.current.label:"Tap the location on the map.";
+    if(mode==="learn")showMarker(state.current);
   }
+ }catch(err){setStatus("App error: "+err.message,"wrong");console.error(err)}
 }
-function answerMcq(choice,btn){
-  if(state.answered)return;
-  state.answered=true;state.questions++;
-  document.querySelectorAll("#options button").forEach(b=>b.disabled=true);
-  if(choice===state.current.answer){
-    state.correct++;btn.classList.add("chosen");setStatus("✓ Correct","correct");
-  } else {
-    setStatus("✗ Not correct. Correct answer: "+state.current.answer,"wrong");
-  }
-  updateStats();
+function locateTap(e){
+ if(state.mode!=="locate"||state.answered||!state.current)return;
+ var r=E("overlay").getBoundingClientRect(),x=(e.clientX-r.left)/r.width*512,y=(e.clientY-r.top)/r.height*512;
+ var t=project(state.current.lat,state.current.lon),d=Math.hypot(x-t[0],y-t[1]),ok=d<=30;
+ state.answered=true;state.questions++;if(ok)state.correct++;showMarker(state.current);
+ setStatus(ok?"✓ Correct — well located!":"✗ Not quite. Correct position is shown.",ok?"correct":"wrong");updateStats();
 }
-function answerChoice(choice,btn){
-  if(state.answered)return;
-  state.answered=true;state.questions++;
-  document.querySelectorAll("#options button").forEach(b=>b.disabled=true);
-  if(choice===state.current.name){state.correct++;btn.classList.add("chosen");setStatus("✓ Correct","correct")}
-  else{setStatus("✗ Not correct. Correct answer: "+state.current.name,"wrong")}
-  updateStats();
+function init(){
+ try{
+  var topics=[];DB.points.concat(DB.mcq.map(function(x){return {subject:x.subject}})).forEach(function(x){if(topics.indexOf(x.subject)<0)topics.push(x.subject)});
+  topics.sort().forEach(function(t){var o=document.createElement("option");o.value=t;o.textContent=t;E("topic").appendChild(o)});
+  E("newBtn").onclick=newQuestion;E("nextBtn").onclick=newQuestion;
+  E("resetBtn").onclick=function(){state.questions=0;state.correct=0;state.answered=false;clearMarker();E("question").innerHTML="Score reset. Press <b>NEW QUESTION</b>.";E("options").innerHTML="";setStatus("");updateStats()};
+  E("mode").onchange=function(e){state.mode=e.target.value;state.answered=false;clearMarker();E("options").innerHTML="";E("question").innerHTML="Press <b>NEW QUESTION</b>.";setStatus("")};
+  E("topic").onchange=function(e){state.topic=e.target.value;state.answered=false;clearMarker();E("options").innerHTML="";E("question").innerHTML="Topic changed. Press <b>NEW QUESTION</b>.";setStatus("")};
+  E("overlay").addEventListener("pointerup",locateTap);updateStats();
+ }catch(err){E("status").textContent="Startup error: "+err.message;console.error(err)}
 }
-function nextFromLocate(ok){
-  state.answered=true;state.questions++;if(ok)state.correct++;
-  updateStats();
+/* Start the application immediately. Do NOT wait for the map image or other
+   external resources; the quiz must work even if the map is slow/unavailable. */
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",init,{once:true});
+}else{
+  init();
 }
-function handleMapTap(e){
-  if(state.mode!=="locate"||state.answered||!state.current)return;
-  const rect=$("overlay").getBoundingClientRect();
-  const x=(e.clientX-rect.left)/rect.width*512;
-  const y=(e.clientY-rect.top)/rect.height*512;
-  const [tx,ty]=project(state.current.lat,state.current.lon);
-  const dx=x-tx,dy=y-ty;
-  const distance=Math.sqrt(dx*dx+dy*dy);
-  const ok=distance<=28;
-  nextFromLocate(ok);
-  if(ok){showMarker(state.current);setStatus("✓ Correct — well located!","correct")}
-  else{showMarker(state.current);setStatus("✗ Try to locate it closer. Correct position is now shown.","wrong")}
-}
-$("overlay").addEventListener("pointerup",handleMapTap);
-$("newBtn").addEventListener("click",newQuestion);
-$("nextBtn").addEventListener("click",()=>{
-  newQuestion();
-});
-$("resetBtn").addEventListener("click",()=>{state.questions=0;state.correct=0;state.answered=false;clearMap();$("question").textContent="Score reset. Press NEW QUESTION.";setStatus("");updateStats()});
-$("mode").addEventListener("change",e=>{state.mode=e.target.value;$("learnCard").style.display=state.mode==="learn"?"block":"none";clearMap();$("options").innerHTML="";$("question").textContent="Press NEW QUESTION to begin.";setStatus("")});
-$("topic").addEventListener("change",e=>{state.topic=e.target.value;clearMap();$("options").innerHTML="";$("question").textContent="Topic changed. Press NEW QUESTION.";setStatus("")});
-document.addEventListener("keydown",e=>{
-  if(e.key==="Enter" && document.activeElement.tagName!=="SELECT"){
-    newQuestion();
-  }
-});
-populateTopics();updateStats();
+window.addEventListener("error",function(e){var s=E("mapStatus");if(s)s.textContent="Diagnostic: "+e.message});
 </script>
-</body>
-</html>
+</body></html>
