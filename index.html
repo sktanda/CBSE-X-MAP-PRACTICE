@@ -32,6 +32,12 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bot
 .answerBox{padding:12px;border-radius:12px;margin-top:10px}.correct{background:#eaf8ef;border:1px solid #9bd4b0}.close{background:#fff6df;border:1px solid #edc36a}.wrong{background:#fff0f0;border:1px solid #e5a0a0}
 .question{font-size:17px;font-weight:750;line-height:1.35}.small{font-size:12px}
 .hidden{display:none!important}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.choice{padding:12px;text-align:left;border:1px solid #cbd5e1;background:#fff;border-radius:10px;font-weight:650}
+.choice.selected{border-color:var(--blue);background:#eff6ff;box-shadow:0 0 0 2px #1769e022 inset}
+.choice.correctChoice{border-color:var(--green);background:#eaf8ef}
+.choice.wrongChoice{border-color:#d62828;background:#fff0f0}
+@media(max-width:700px){.choices{grid-template-columns:1fr}}
 .leaflet-container{font:13px inherit}.leaflet-control-attribution{font-size:9px}
 .leaflet-tooltip{font-weight:700}
 .target-pin,.user-pin{border-radius:50%;width:22px;height:22px;border:3px solid white;box-shadow:0 1px 6px #0008}
@@ -67,6 +73,8 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bot
 <section id="quizPanel" class="quizPanel hidden">
  <div id="question" class="question"></div>
  <div id="quizHelp" class="muted" style="margin-top:7px"></div>
+ <div id="choices" class="choices hidden"></div>
+ <button id="checkBtn" class="primary hidden" style="margin-top:10px">Check Answer</button>
  <div id="status" class="status"></div>
 </section>
 
@@ -181,15 +189,14 @@ const TOPICS = ["All",...Array.from(new Set(LOCATIONS.map(x=>x.cat)))];
 const topic=document.getElementById('topic'), mode=document.getElementById('mode'), newBtn=document.getElementById('newBtn'), nextBtn=document.getElementById('nextBtn');
 TOPICS.forEach(t=>topic.add(new Option(t,t)));
 
-let map, stateLayer, current=null, userMarker=null, targetMarker=null, learnedMarkers=[], score=0,total=0, shuffled=[],idx=0;
+let map, stateLayer, current=null, userMarker=null, targetMarker=null, learnedMarkers=[], score=0,total=0, shuffled=[],idx=0, selectedChoice=null, currentOptions=[];
 const indiaBounds=[[6,68],[38,98]];
 function initMap(){
  map=L.map('map',{preferCanvas:true,zoomControl:true,worldCopyJump:false,minZoom:4,maxZoom:10,maxBounds:indiaBounds,maxBoundsViscosity:.85});
- const light=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap contributors © CARTO',subdomains:'abcd',maxZoom:19});
- const osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19});
- light.addTo(map);
+ const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19});
+ osm.addTo(map);
  map.fitBounds(indiaBounds,{padding:[8,8]});
- L.control.layers({"Clean map":light,"Map with labels":osm},null,{collapsed:true}).addTo(map);
+ L.control.layers({"Map":osm},null,{collapsed:true}).addTo(map);
  loadBoundaries();
  map.on('resize',()=>map.invalidateSize());
  setTimeout(()=>map.invalidateSize(),250);
@@ -234,43 +241,113 @@ function renderLearn(){
  map.fitBounds(L.latLngBounds(arr.map(x=>[x.lat,x.lng])),{padding:[30,30],maxZoom:6});
 }
 function startQuiz(){
- clearMarkers();document.getElementById('learnPanel').classList.add('hidden');document.getElementById('quizPanel').classList.remove('hidden');
+ clearMarkers(); document.getElementById('learnPanel').classList.add('hidden'); document.getElementById('quizPanel').classList.remove('hidden');
  const pool=questionPool(); shuffled=pool.slice().sort(()=>Math.random()-.5); idx=0; score=0; total=0; updateScore(); nextQuestion();
+}
+function makeOptions(item){
+ const others=questionPool().filter(x=>x!==item).sort(()=>Math.random()-.5).slice(0,3);
+ return [item,...others].sort(()=>Math.random()-.5);
+}
+function renderChoices(){
+ const box=document.getElementById('choices'); box.innerHTML=''; box.classList.remove('hidden');
+ currentOptions=makeOptions(current); selectedChoice=null;
+ currentOptions.forEach((it,i)=>{
+  const b=document.createElement('button'); b.type='button'; b.className='choice'; b.textContent=String.fromCharCode(65+i)+'. '+it.n;
+  b.onclick=()=>{selectedChoice=it;box.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));b.classList.add('selected')};
+  box.appendChild(b);
+ });
+ document.getElementById('checkBtn').classList.remove('hidden');
 }
 function nextQuestion(){
  const pool=shuffled.length?shuffled:questionPool(); if(!pool.length)return;
- current=pool[idx++%pool.length]; total++; updateScore();
- document.getElementById('question').textContent=mode.value==='identify'?`Which location is marked on the map? Hint: ${current.ctx}`:boardModeQuestion(current);
- document.getElementById('quizHelp').textContent=mode.value==='identify'?'Tap the red marker to reveal the location after answering.':'Tap the map where you think the correct location is.';
- document.getElementById('status').textContent='';
- targetMarker=L.marker([current.lat,current.lng],{icon:icon('target-pin')}).addTo(map).bindTooltip('Correct location');
- targetMarker.setOpacity(mode.value==='locate'?0:1);
- map.flyTo([current.lat,current.lng],Math.max(map.getZoom(),5),{duration:.3});
+ current=pool[idx++%pool.length]; total++; updateScore(); selectedChoice=null;
+ const choices=document.getElementById('choices'); choices.innerHTML=''; choices.classList.add('hidden'); document.getElementById('checkBtn').classList.add('hidden'); document.getElementById('status').textContent='';
+ clearMarkers();
+ if(mode.value==='identify'){
+  document.getElementById('question').textContent='Which location is marked on the map?';
+  document.getElementById('quizHelp').textContent=current.ctx+' Choose the correct location below.';
+  targetMarker=L.marker([current.lat,current.lng],{icon:icon('number-pin','1'),interactive:false}).addTo(map);
+  renderChoices();
+ } else {
+  document.getElementById('question').textContent=boardModeQuestion(current);
+  document.getElementById('quizHelp').textContent='Tap the map where you think the correct location is. Your marker will appear only after you tap.';
+  map.flyTo([current.lat,current.lng],Math.max(map.getZoom(),5),{duration:.25});
+ }
+}
+function checkIdentify(){
+ if(!current||mode.value!=='identify'||!selectedChoice)return;
+ const ok=selectedChoice===current; const status=document.getElementById('status');
+ document.querySelectorAll('.choice').forEach((b,i)=>{const it=currentOptions[i];if(it===current)b.classList.add('correctChoice');if(it===selectedChoice&&!ok)b.classList.add('wrongChoice')});
+ if(ok){score++;status.className='status answerBox correct';status.textContent='✓ Correct — '+current.n+' is the marked location.'}
+ else{status.className='status answerBox wrong';status.textContent='✗ Not quite. The marked location is '+current.n+'. '+current.fact}
+ total=Math.max(total,1);updateScore();
+ // Reveal the true location only after answering.
+ targetMarker=L.marker([current.lat,current.lng],{icon:icon('target-pin'),interactive:false}).addTo(map);
+ showDetail(current);
 }
 function evaluate(e){
- if(!current||mode.value==='learn'||mode.value==='mcq')return;
+ if(!current||mode.value!=='locate')return;
  const ll=map.mouseEventToLatLng(e.originalEvent);
  if(userMarker)map.removeLayer(userMarker);
- userMarker=L.marker(ll,{icon:icon('user-pin')}).addTo(map).bindTooltip('Your answer');
+ userMarker=L.marker(ll,{icon:icon('user-pin'),interactive:false}).addTo(map);
  const d=map.distance(ll,[current.lat,current.lng])/1000;
  const status=document.getElementById('status');
  if(d<=40){score++;status.className='status answerBox correct';status.textContent=`✓ Correct — your point is about ${Math.round(d)} km from the target.`}
- else if(d<=80){score++;status.className='status answerBox close';status.textContent=`✓ Accepted — about ${Math.round(d)} km away. Refine it to learn the exact position.`}
+ else if(d<=80){score++;status.className='status answerBox close';status.textContent=`✓ Accepted — about ${Math.round(d)} km away. You can refine the exact position.`}
  else{status.className='status answerBox wrong';status.textContent=`✗ Not close enough — about ${Math.round(d)} km away. Red = correct location; blue = your answer.`}
- total=Math.max(total,1);updateScore(); targetMarker.setOpacity(1);
+ total=Math.max(total,1);updateScore();
+ targetMarker=L.marker([current.lat,current.lng],{icon:icon('target-pin'),interactive:false}).addTo(map);
  showDetail(current);
 }
 function updateScore(){document.getElementById('score').textContent=score;document.getElementById('total').textContent=total}
 function modeChanged(){
  document.getElementById('detailCard').classList.add('hidden');
- if(mode.value==='learn')renderLearn(); else if(mode.value==='mcq'){clearMarkers();renderIdentification()} else startQuiz();
+ if(mode.value==='learn')renderLearn(); else if(mode.value==='mcq')startIdentificationQuiz(); else startQuiz();
 }
-function renderIdentification(){
- document.getElementById('learnPanel').classList.remove('hidden');document.getElementById('quizPanel').classList.add('hidden');clearMarkers();
- const grid=document.getElementById('learnGrid');grid.innerHTML='';
- document.getElementById('learnTitle').textContent='CBSE Identification Practice';document.getElementById('learnCount').textContent=`${ID_ITEMS.length} identification topics`;
- ID_ITEMS.forEach((x,i)=>{const d=document.createElement('div');d.className='learnItem';d.innerHTML=`<b>${i+1}. ${x.name}</b><span>${x.cat} · ${x.detail}</span>`;d.onclick=()=>{document.getElementById('detailCard').classList.remove('hidden');document.getElementById('detailCard').innerHTML=`<h3>${x.name}</h3><span class="tag">${x.cat}</span><p><b>CBSE identification:</b><br>${x.detail}</p><p><b>How to revise:</b><br>Practise identifying this feature on a political/outline map and connect it with the region or states specified in the CBSE syllabus.</p>`};grid.appendChild(d)});
+function stateName(layer){
+ const p=layer?.feature?.properties||{}; return String(p.ST_NM||p.NAME_1||p.name||p.State||p.state||p.st_nm||'').trim();
+}
+const ID_STATE_GROUPS={
+ 'Alluvial soil':['Punjab','Haryana','Uttar Pradesh','Bihar','West Bengal','Assam','Odisha'],
+ 'Black soil':['Maharashtra','Madhya Pradesh','Gujarat','Telangana','Andhra Pradesh','Karnataka','Tamil Nadu'],
+ 'Red and Yellow soil':['Odisha','Chhattisgarh','Jharkhand','Karnataka','Andhra Pradesh','Tamil Nadu'],
+ 'Laterite soil':['Karnataka','Kerala','Tamil Nadu','Maharashtra','Odisha','Assam'],
+ 'Arid soil':['Rajasthan','Gujarat','Haryana','Punjab'],
+ 'Forest and Mountain soil':['Jammu and Kashmir','Ladakh','Himachal Pradesh','Uttarakhand','Sikkim','Arunachal Pradesh','Nagaland','Manipur','Mizoram','Tripura','Meghalaya'],
+ 'Major Rice-producing areas':['West Bengal','Uttar Pradesh','Punjab','Odisha','Bihar','Chhattisgarh','Assam','Andhra Pradesh','Telangana','Tamil Nadu','Kerala'],
+ 'Major Wheat-producing areas':['Uttar Pradesh','Madhya Pradesh','Punjab','Haryana','Rajasthan','Bihar'],
+ 'Sugarcane – major producer states':['Uttar Pradesh','Maharashtra','Karnataka','Tamil Nadu','Bihar','Gujarat'],
+ 'Tea – major producer states':['Assam','West Bengal','Tamil Nadu','Kerala'],
+ 'Coffee – major producer states':['Karnataka','Kerala','Tamil Nadu'],
+ 'Rubber – major producer states':['Kerala','Karnataka','Tamil Nadu','Tripura'],
+ 'Cotton – major producer states':['Gujarat','Maharashtra','Telangana','Rajasthan','Karnataka','Madhya Pradesh','Punjab','Haryana','Andhra Pradesh','Tamil Nadu'],
+ 'Jute – major producer states':['West Bengal','Bihar','Assam','Odisha','Meghalaya']
+};
+function clearStateHighlight(){if(!stateLayer)return;stateLayer.eachLayer(l=>l.setStyle({color:'#5b6574',weight:1.1,fillColor:'#ffffff',fillOpacity:.08}));}
+function highlightStates(names){
+ if(!stateLayer)return;
+ const wanted=names.map(x=>x.toLowerCase().replace(/\s+/g,' '));
+ stateLayer.eachLayer(l=>{const n=stateName(l).toLowerCase().replace(/\s+/g,' ');if(wanted.some(w=>n===w||n.includes(w)||w.includes(n)))l.setStyle({color:'#1769e0',weight:2,fillColor:'#60a5fa',fillOpacity:.42});});
+ stateLayer.bringToFront();
+}
+let idQuizItem=null,idAnswered=false;
+function startIdentificationQuiz(){
+ clearMarkers();clearStateHighlight();document.getElementById('learnPanel').classList.add('hidden');document.getElementById('quizPanel').classList.remove('hidden');
+ const item=ID_ITEMS[Math.floor(Math.random()*ID_ITEMS.length)]; idQuizItem=item; idAnswered=false; total++; updateScore();
+ document.getElementById('question').textContent='Identify the feature shown on the map.';
+ document.getElementById('quizHelp').textContent=item.cat+' · The relevant region/state areas are highlighted in blue. Choose the correct identification.';
+ const box=document.getElementById('choices');box.classList.remove('hidden');box.innerHTML='';document.getElementById('checkBtn').classList.add('hidden');document.getElementById('status').textContent='';
+ const opts=ID_ITEMS.filter(x=>x!==item).sort(()=>Math.random()-.5).slice(0,3).concat(item).sort(()=>Math.random()-.5);
+ opts.forEach((x,i)=>{const b=document.createElement('button');b.type='button';b.className='choice';b.textContent=String.fromCharCode(65+i)+'. '+x.name;b.onclick=()=>{if(idAnswered)return;box.querySelectorAll('.choice').forEach(z=>z.classList.remove('selected'));b.classList.add('selected');b.dataset.selected='1';document.getElementById('checkBtn').classList.remove('hidden');};b.dataset.answer=x.name;box.appendChild(b)});
+ highlightStates(ID_STATE_GROUPS[item.name]||[]);
  map.fitBounds(indiaBounds,{padding:[8,8]});
+}
+function checkIdentification(){
+ if(!idQuizItem||idAnswered)return;const selected=document.querySelector('#choices .choice.selected');if(!selected)return;idAnswered=true;
+ const ok=selected.dataset.answer===idQuizItem.name;const status=document.getElementById('status');
+ document.querySelectorAll('#choices .choice').forEach(b=>{if(b.dataset.answer===idQuizItem.name)b.classList.add('correctChoice');if(b===selected&&!ok)b.classList.add('wrongChoice')});
+ if(ok){score++;status.className='status answerBox correct';status.textContent='✓ Correct — '+idQuizItem.name+'. '+idQuizItem.detail}else{status.className='status answerBox wrong';status.textContent='✗ Not quite. The correct identification is '+idQuizItem.name+'. '+idQuizItem.detail}
+ updateScore();
 }
 map = null;
 let leafletReady = false;
@@ -287,9 +364,10 @@ async function boot(){
  // Populate the topic selector immediately, independently of the map engine.
  TOPICS.forEach(t=>{});
  mode.addEventListener('change',modeChanged);
- topic.addEventListener('change',()=>mode.value==='learn'?renderLearn():mode.value==='mcq'?renderIdentification():startQuiz());
- newBtn.addEventListener('click',()=>mode.value==='learn'?renderLearn():mode.value==='mcq'?renderIdentification():startQuiz());
- nextBtn.addEventListener('click',()=>mode.value==='learn'?renderLearn():mode.value==='mcq'?renderIdentification():nextQuestion());
+ topic.addEventListener('change',()=>mode.value==='learn'?renderLearn():mode.value==='mcq'?startIdentificationQuiz():startQuiz());
+ newBtn.addEventListener('click',()=>mode.value==='learn'?renderLearn():mode.value==='mcq'?startIdentificationQuiz():startQuiz());
+ nextBtn.addEventListener('click',()=>mode.value==='learn'?renderLearn():mode.value==='mcq'?startIdentificationQuiz():nextQuestion());
+ document.getElementById('checkBtn').addEventListener('click',()=>mode.value==='identify'?checkIdentify():checkIdentification());
  document.getElementById('map').innerHTML='<div style="padding:24px;text-align:center;color:#64748b;font-weight:650">Loading interactive map…</div>';
  try{
   try{await loadLeaflet('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js');}
