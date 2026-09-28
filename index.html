@@ -43,7 +43,9 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bot
 .target-pin,.user-pin{border-radius:50%;width:22px;height:22px;border:3px solid white;box-shadow:0 1px 6px #0008}
 .target-pin{background:var(--red)}.user-pin{background:var(--blue)}
 .number-pin{background:#fff;border:2px solid var(--blue);color:var(--blue);border-radius:50%;width:28px;height:28px;text-align:center;line-height:24px;font-weight:800;box-shadow:0 1px 5px #0006}
-@media(max-width:700px){header h1{font-size:17px}.app{padding:8px}#map{height:58vh;min-height:390px}.learnGrid{grid-template-columns:1fr}.score{width:100%;margin-left:0}}
+.mapSection{margin-top:4px}.mapLabel{font-size:14px;font-weight:800;color:var(--ink);margin:0 0 6px 2px}
+@media(max-width:700px){.choices{grid-template-columns:1fr}.mapSection{margin-top:8px}#map{height:46vh;min-height:300px;max-height:460px}}
+@media(max-width:700px){header h1{font-size:17px}.app{padding:8px}.learnGrid{grid-template-columns:1fr}.score{width:100%;margin-left:0}}
 </style>
 </head>
 <body>
@@ -61,15 +63,7 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bot
  <div class="muted" style="margin-top:8px">The map is geographic and responsive: markers are anchored to latitude/longitude and the map itself handles projection and resizing. It is not tied to a fixed image resolution.</div>
 </section>
 
-<div id="map"></div>
-<div class="legend"><span><i class="dot blue"></i>Your answer</span><span><i class="dot red"></i>Correct location</span><span><i class="dot green"></i>Learned/selected</span></div>
-
-<section id="learnPanel" class="learnPanel">
- <div class="row"><b id="learnTitle">Learn the locations</b><span class="muted" id="learnCount"></span></div>
- <div class="learnGrid" id="learnGrid"></div>
- <div id="detailCard" class="card hidden"></div>
-</section>
-
+<!-- Keep the question/answer area before the map so mobile page scrolling is natural. -->
 <section id="quizPanel" class="quizPanel hidden">
  <div id="question" class="question"></div>
  <div id="quizHelp" class="muted" style="margin-top:7px"></div>
@@ -77,6 +71,19 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bot
  <button id="checkBtn" class="primary hidden" style="margin-top:10px">Check Answer</button>
  <div id="status" class="status"></div>
 </section>
+
+<section id="learnPanel" class="learnPanel">
+ <div class="row"><b id="learnTitle">Learn the locations</b><span class="muted" id="learnCount"></span></div>
+ <div class="learnGrid" id="learnGrid"></div>
+ <div id="detailCard" class="card hidden"></div>
+</section>
+
+<!-- The map is deliberately at the bottom of the content on mobile/desktop. -->
+<div class="mapSection">
+ <div class="mapLabel">Map</div>
+ <div id="map"></div>
+ <div class="legend"><span><i class="dot blue"></i>Your answer</span><span><i class="dot red"></i>Correct location</span><span><i class="dot green"></i>Learned/selected</span></div>
+</div>
 
 <section id="info" class="info">
  <b>How this version avoids the earlier alignment problem</b>
