@@ -16,8 +16,8 @@ button{background:#123b6d;color:#fff;border:0;font-weight:750}button.green{backg
 .status{min-height:27px;margin-top:8px;font-weight:700}.correct{color:#147a45}.wrong{color:#b42318}
 .stats{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.stat{background:#eef5fb;border-radius:999px;padding:6px 9px;font-size:12px}
 .options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.options button{background:white;color:#182230;border:1px solid #cbd5e1;text-align:left}
-.mapwrap{position:relative;border:1px solid #d5dde7;border-radius:12px;overflow:hidden;background:#fff}
-.mapwrap img{display:block;width:100%;height:auto;min-height:280px;object-fit:contain}
+.mapwrap{position:relative;border:1px solid #d5dde7;border-radius:12px;overflow:hidden;background:#fff;aspect-ratio:1/1}
+.mapwrap img{display:block;width:100%;height:100%;object-fit:fill}
 #overlay{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 #marker{fill:#d71920;stroke:white;stroke-width:3}
 @media(max-width:650px){.controls{grid-template-columns:1fr}.options{grid-template-columns:1fr}}
@@ -112,20 +112,45 @@ const DB={"points":[{"subject":"History","topic":"Congress Sessions","name":"192
 ]};
 /* State */
 var state={mode:"locate",topic:"all",current:null,answered:false,questions:0,correct:0};
-var MAP={left:24,right:504,top:0,bottom:512,lon0:70,lon1:100,lat0:8,lat1:40};
+var MAP={left:24,right:504,top:0,bottom:512,lon0:70,lon1:100,lat0:0,lat1:40,phi1:8,phi2:40,latOrigin:24,lonOrigin:80};
 
 function E(id){return document.getElementById(id)}
 function setStatus(t,c){E("status").textContent=t;E("status").className="status "+(c||"")}
 function updateStats(){E("qcount").textContent=state.questions;E("correct").textContent=state.correct;E("accuracy").textContent=state.questions?Math.round(state.correct/state.questions*100)+"%":"0%"}
+function lccForward(lat,lon){
+  var d=Math.PI/180, p1=MAP.phi1*d, p2=MAP.phi2*d, phi=lat*d, lam=lon*d, phi0=MAP.latOrigin*d, lam0=MAP.lonOrigin*d;
+  var n=Math.log(Math.cos(p1)/Math.cos(p2))/Math.log(Math.tan(Math.PI/4+p2/2)/Math.tan(Math.PI/4+p1/2));
+  var F=Math.cos(p1)*Math.pow(Math.tan(Math.PI/4+p1/2),n)/n;
+  var rho=F/Math.pow(Math.tan(Math.PI/4+phi/2),n);
+  var rho0=F/Math.pow(Math.tan(Math.PI/4+phi0/2),n);
+  var th=n*(lam-lam0);
+  return [rho*Math.sin(th),rho0-rho*Math.cos(th)];
+}
+var LCC_EXTENT=(function(){
+  var pts=[lccForward(MAP.lat0,MAP.lon0),lccForward(MAP.lat0,MAP.lon1),lccForward(MAP.lat1,MAP.lon0),lccForward(MAP.lat1,MAP.lon1)];
+  var xs=pts.map(function(p){return p[0]}), ys=pts.map(function(p){return p[1]});
+  return {minX:Math.min.apply(null,xs),maxX:Math.max.apply(null,xs),minY:Math.min.apply(null,ys),maxY:Math.max.apply(null,ys)};
+})();
 function project(lat,lon){
-  // Geographic Web-Mercator-style projection for the India map viewport.
-  var x=MAP.left+(lon-MAP.lon0)/(MAP.lon1-MAP.lon0)*(MAP.right-MAP.left);
-  var latR=lat*Math.PI/180, a=Math.log(Math.tan(Math.PI/4+latR/2));
-  var a0=Math.log(Math.tan(Math.PI/4+(MAP.lat0*Math.PI/180)/2));
-  var a1=Math.log(Math.tan(Math.PI/4+(MAP.lat1*Math.PI/180)/2));
-  var y=MAP.top+(a1-a)/(a1-a0)*(MAP.bottom-MAP.top);
+  var p=lccForward(lat,lon);
+  var x=MAP.left+(p[0]-LCC_EXTENT.minX)/(LCC_EXTENT.maxX-LCC_EXTENT.minX)*(MAP.right-MAP.left);
+  var y=MAP.top+(LCC_EXTENT.maxY-p[1])/(LCC_EXTENT.maxY-LCC_EXTENT.minY)*(MAP.bottom-MAP.top);
   return [x,y];
 }
+function unproject(x,y){
+  var X=LCC_EXTENT.minX+(x-MAP.left)/(MAP.right-MAP.left)*(LCC_EXTENT.maxX-LCC_EXTENT.minX);
+  var Y=LCC_EXTENT.maxY-(y-MAP.top)/(MAP.bottom-MAP.top)*(LCC_EXTENT.maxY-LCC_EXTENT.minY);
+  var d=Math.PI/180,p1=MAP.phi1*d,p2=MAP.phi2*d,phi0=MAP.latOrigin*d,lam0=MAP.lonOrigin*d;
+  var n=Math.log(Math.cos(p1)/Math.cos(p2))/Math.log(Math.tan(Math.PI/4+p2/2)/Math.tan(Math.PI/4+p1/2));
+  var F=Math.cos(p1)*Math.pow(Math.tan(Math.PI/4+p1/2),n)/n;
+  var rho0=F/Math.pow(Math.tan(Math.PI/4+phi0/2),n);
+  var rho=Math.sign(n)*Math.sqrt(X*X+(rho0-Y)*(rho0-Y));
+  var theta=Math.atan2(X,rho0-Y);
+  var phi=2*Math.atan(Math.pow(F/rho,1/n))-Math.PI/2;
+  var lam=lam0+theta/n;
+  return {lat:phi/d,lon:lam/d};
+}
+
 function random(a){return a[Math.floor(Math.random()*a.length)]}
 function points(){return DB.points.filter(x=>state.topic==="all"||x.subject===state.topic)}
 function mcqs(){return DB.mcq.filter(x=>state.topic==="all"||x.subject===state.topic)}
@@ -236,11 +261,8 @@ function newQuestion(){
 function locateTap(e){
  if(state.mode!=="locate"||state.answered||!state.current)return;
  var r=E("overlay").getBoundingClientRect(),x=(e.clientX-r.left)/r.width*512,y=(e.clientY-r.top)/r.height*512;
- var lon=MAP.lon0+(x-MAP.left)/(MAP.right-MAP.left)*(MAP.lon1-MAP.lon0);
- var frac=(y-MAP.top)/(MAP.bottom-MAP.top);
- var a0=Math.log(Math.tan(Math.PI/4+(MAP.lat0*Math.PI/180)/2)),a1=Math.log(Math.tan(Math.PI/4+(MAP.lat1*Math.PI/180)/2));
- var a=a1-frac*(a1-a0);var lat=(2*Math.atan(Math.exp(a))-Math.PI/2)*180/Math.PI;
- var dkm=kmDistance({lat:lat,lon:lon},state.current),ok=dkm<=80;
+ var clicked=unproject(x,y);
+ var dkm=kmDistance(clicked,state.current),ok=dkm<=80;
  state.answered=true;state.questions++;if(ok)state.correct++;showUserMarker(x,y);showMarker(state.current);
  var band=dkm<=40?"🟢 Very close":dkm<=80?"🟡 Accepted — refine the position":"🔴 Too far from the correct location";
  setStatus((ok?"✓ Correct — ":"✗ ")+band+" • Difference ≈ "+Math.round(dkm)+" km",ok?"correct":"wrong");E("hint").textContent=resultPrompt(state.current);updateStats();
