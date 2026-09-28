@@ -281,7 +281,8 @@ function checkIdentify(){
  if(ok){score++;status.className='status answerBox correct';status.textContent='✓ Correct — '+current.n+' is the marked location.'}
  else{status.className='status answerBox wrong';status.textContent='✗ Not quite. The marked location is '+current.n+'. '+current.fact}
  total=Math.max(total,1);updateScore();
- // Reveal the true location only after answering.
+ // Reveal the true location only after answering. Remove the temporary numbered marker first.
+ if(targetMarker){map.removeLayer(targetMarker);targetMarker=null}
  targetMarker=L.marker([current.lat,current.lng],{icon:icon('target-pin'),interactive:false}).addTo(map);
  showDetail(current);
 }
@@ -296,6 +297,7 @@ function evaluate(e){
  else if(d<=80){score++;status.className='status answerBox close';status.textContent=`✓ Accepted — about ${Math.round(d)} km away. You can refine the exact position.`}
  else{status.className='status answerBox wrong';status.textContent=`✗ Not close enough — about ${Math.round(d)} km away. Red = correct location; blue = your answer.`}
  total=Math.max(total,1);updateScore();
+ if(targetMarker){map.removeLayer(targetMarker);targetMarker=null}
  targetMarker=L.marker([current.lat,current.lng],{icon:icon('target-pin'),interactive:false}).addTo(map);
  showDetail(current);
 }
